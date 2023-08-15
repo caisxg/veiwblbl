@@ -6,6 +6,7 @@ import os
 import time
 import random
 import shutil
+import datetime
 
 from pageset import open_browser
 
@@ -53,37 +54,51 @@ if __name__ == "__main__":
     os.chdir(project_root)
     loginfo(f"当前工作目录: {os.getcwd()}")
     
+    try:
+        browser_config =  {
+                "browserkernel": "chromium",
+                "channel": "msedge",
+                "headless": False,
+                "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.57",
+                    # 用户目录随便写
+                "user_data_dir": "~/Default",
+            }
+        url = "https://live.bilibili.com/30279606"
+        time.sleep(random.uniform(2, 5))
+        [page, context, pp] = open_browser(url, browser_config)
+        page.wait_for_timeout(random.uniform(1000, 4000))
+        time.sleep(random.uniform(2, 5))
+        
+        current_time = datetime.datetime.now().time()
 
-    browser_config =  {
-            "browserkernel": "chromium",
-            "channel": "msedge",
-            "headless": False,
-            "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.57",
-                # 用户目录随便写
-            "user_data_dir": "~/Default",
-        }
-    url = "https://live.bilibili.com/30279606"
-    time.sleep(random.uniform(2, 5))
-    [page, context, pp] = open_browser(url, browser_config)
-    page.wait_for_timeout(random.uniform(1000, 4000))
-    time.sleep(random.uniform(2, 5))
+        if not datetime.time(23, 0) <= current_time <= datetime.time(1, 0):
+            nn = 1
+        else:
+            nn = 20
+        for ii in range(nn):  # 这里设置循环次数，你可以根据需要调整次数
+            x = random.randint(0, 700)
+            y = random.randint(0, 900)
+            page.mouse.move(x, y)
+            page.keyboard.press("Enter")
+            loginfo(f"移动鼠标到: {x}, {y}")
+            if ii % 4 == 0:
+                page.reload() 
+            if ii > 1:      
+                page.wait_for_timeout(random.randint(1000*60*0.5, 1000*62*0.5))  # 随机等待时间，单位是毫秒, 这里是 500秒 到 1500秒之间
+            if ii % 10 == 0 or ii <=10:
+                loginfo(f"截图")
+                page.screenshot(path=screen_name())
 
-    for ii in range(20):  # 这里设置循环次数，你可以根据需要调整次数
-        x = random.randint(0, 700)
-        y = random.randint(0, 900)
-        page.mouse.move(x, y)
-        page.keyboard.press("Enter")
-        loginfo(f"移动鼠标到: {x}, {y}")
-        if ii % 4 == 0:
-            page.reload()           
-        page.wait_for_timeout(random.randint(1000*60*0.5, 1000*62*0.5))  # 随机等待时间，单位是毫秒, 这里是 500秒 到 1500秒之间
-        if ii % 10 == 0 or ii <=10:
-            loginfo(f"截图")
-            page.screenshot(path=screen_name())
-
-    page.close()
-    context.close()
-    pp.stop()
+        page.close()
+        context.close()
+        pp.stop()
+    except:
+        loginfo(f"发生错误,关闭浏览器")
+        page.close()
+        context.close()
+        pp.stop()
+    finally:
+        shutil.rmtree("~/Default")
     loginfo(f"尝试清理截图文件夹,防止占用磁盘空间")
     delete_oldest_folders("screenshots", 5)
 
