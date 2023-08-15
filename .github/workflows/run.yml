@@ -47,11 +47,12 @@ jobs:
         conda env list
         echo "========================"
         playwright install chrome
-    # 不知道行不行, 缓存机制不太懂
+    # 不知道行不行, 缓存机制不太懂,不知道路径放到哪里,
+    # 算了,不缓存把
     - uses: actions/cache@v3
       id: playwright-cache
       with:
-        path: ${{ github.workspace }}/.cache/ms-playwright
+        path:  /home/runner/.cache/ms-playwright
         key: playwright-${{ runner.os }}-${{ hashFiles('playwright.lock.json') }}
         restore-keys: |
           playwright-${{ runner.os }}-
