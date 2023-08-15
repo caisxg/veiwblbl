@@ -19,7 +19,9 @@ jobs:
         sudo apt-get install -y language-pack-zh-hans
         export LANG=zh_CN.UTF-8
         export LC_ALL=zh_CN.UTF-8
+        echo -e "en_US.UTF-8 UTF-8\nzh_CN.UTF-8 UTF-8\nzh_CN.GBK GBK\nzh_CN GB2312" | sudo tee -a /var/lib/locales/supported.d/local
         sudo timedatectl set-timezone Asia/Shanghai
+        sudo apt-get install fonts-droid-fallback ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming
     
     - uses: actions/setup-python@v4
       with:
