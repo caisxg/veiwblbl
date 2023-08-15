@@ -69,20 +69,20 @@ if __name__ == "__main__":
     page.wait_for_timeout(random.uniform(1000, 4000))
     time.sleep(random.uniform(2, 5))
 
-    for ii in range(20):  # 这里设置循环次数，你可以根据需要调整次数
+    for ii in range(4):  # 这里设置循环次数，你可以根据需要调整次数
         x = random.randint(0, 700)
         y = random.randint(0, 900)
         page.mouse.move(x, y)
         page.keyboard.press("Enter")
         loginfo(f"移动鼠标到: {x}, {y}")
-        page.wait_for_timeout(random.randint(1000*50, 1000*70))  # 随机等待时间，单位是毫秒, 这里是 500秒 到 1500秒之间
+        page.wait_for_timeout(random.randint(1000*60*0.5, 1000*62*0.5))  # 随机等待时间，单位是毫秒, 这里是 500秒 到 1500秒之间
         if ii % 10 == 0 or ii <=10:
             page.screenshot(path=screen_name())
 
     page.close()
     context.close()
     pp.stop()
-    
+
     delete_oldest_folders("screenshots", 5)
 
 

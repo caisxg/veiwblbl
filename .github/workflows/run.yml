@@ -20,7 +20,10 @@ jobs:
         persist-credentials: true
         fetch-depth: 0
         clean: true
-
+    - name: Set up Git
+      run: |
+        git config --global user.name "zoushucai"
+        git config --global user.email "zoushucai@users.noreply.github.com"
     - name: setup miniconda
       uses: conda-incubator/setup-miniconda@v2
       with:
@@ -33,7 +36,6 @@ jobs:
         python-version: "3.11"
         environment-file: etc/example-environment.yml
     - name: Cache Conda env
-      if: env.should_run_next_step == 'true'
       uses: actions/cache@v3
       with:
         path: ${{ env.CONDA }}/envs
@@ -44,12 +46,11 @@ jobs:
       id: cache
 
     - name: Update environment
-      if: steps.cache.outputs.cache-hit != 'true' && env.should_run_next_step == 'true'
+      if: steps.cache.outputs.cache-hit != 'true'
       run:
         mamba env update -n test -f etc/example-environment.yml
       
     - name: Install python dependencies
-      if: env.should_run_next_step == 'true'
       run: |
         conda info
         echo "========================"
