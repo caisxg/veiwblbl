@@ -4,7 +4,6 @@ import sys
 from pathlib import Path
 from platform import platform, system
 from playwright.sync_api import sync_playwright, expect
-from utils.tools import create_directory_or_file 
 from utils.loghelper import loginfo
 import copy
 import sys
