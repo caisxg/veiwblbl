@@ -1,0 +1,69 @@
+name: run
+on: 
+  schedule:
+    - cron: '55 15 * * *' 
+  push:
+    branches: [main]
+jobs:
+  run_script_and_update:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+      with:
+        persist-credentials: true
+        fetch-depth: 0
+        clean: true
+
+    - name: setup miniconda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        miniforge-variant: Mambaforge
+        miniforge-version: latest
+        use-mamba: true
+        auto-activate-base: false
+        activate-environment: test
+        auto-update-conda: true
+        python-version: "3.11"
+        environment-file: etc/example-environment.yml
+    - name: Cache Conda env
+      if: env.should_run_next_step == 'true'
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CONDA }}/envs
+        key:
+          conda-${{ runner.os }}--${{ runner.arch }}--${{ hashFiles('etc/example-environment.yml') }}-${{ env.CACHE_NUMBER }}
+      env:
+        CACHE_NUMBER: 0
+      id: cache
+
+    - name: Update environment
+      if: steps.cache.outputs.cache-hit != 'true' && env.should_run_next_step == 'true'
+      run:
+        mamba env update -n test -f etc/example-environment.yml
+      
+    - name: Install python dependencies
+      if: env.should_run_next_step == 'true'
+      run: |
+        conda info
+        echo "========================"
+        conda list
+        conda env list
+        echo "========================"
+        playwright install chrome
+    - name: Run tests
+      if: env.should_run_next_step == 'true'
+      run: |
+        python3 main.py
+
+    - name: update 
+      run: |
+        git add .
+        git commit -m "Update"
+        git push origin main
