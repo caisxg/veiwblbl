@@ -33,6 +33,7 @@ jobs:
         locale -a
         echo "===========2============="
         locale
+        echo "当前日期和时间：$(date +'%Y-%m-%d %H:%M:%S') "
     - uses: actions/setup-python@v4
       with:
         python-version: '3.9'

@@ -70,17 +70,21 @@ if __name__ == "__main__":
         time.sleep(random.uniform(2, 5))
         
         current_time = datetime.datetime.now().time()
+        loginfo(f"当前时间: {current_time}")
 
-        if not datetime.time(23, 0) <= current_time <= datetime.time(1, 0):
+        is_exec = datetime.time(23, 0) <= current_time  <= datetime.time(24, 0) or datetime.time(0, 0) <= current_time  <= datetime.time(1, 0)
+        if not is_exec:
             nn = 1
         else:
             nn = 20
+        loginfo(f"循环次数: {nn}")
         for ii in range(nn):  # 这里设置循环次数，你可以根据需要调整次数
             x = random.randint(0, 700)
             y = random.randint(0, 900)
             page.mouse.move(x, y)
             page.keyboard.press("Enter")
             loginfo(f"移动鼠标到: {x}, {y}")
+            loginfo(f"当前时间为: {datetime.datetime.now().time()}")
             if ii % 4 == 0:
                 page.reload() 
             if ii > 1:      
