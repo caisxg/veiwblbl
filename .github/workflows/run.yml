@@ -1,0 +1,69 @@
+name: run
+on:
+  schedule:
+    - cron: '47 15 * * *'
+  push:
+    branches: [main]
+jobs:
+  run_script_and_update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache apt packages
+        uses: actions/cache@v3
+        with:
+          path: /var/cache/apt
+          key: apt-${{ runner.os }}-${{ hashFiles('**/packages-lock.json') }}
+
+      - name: 设置环境
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tzdata
+          sudo apt-get install -y language-pack-zh-hans
+          export LANG=zh_CN.UTF-8
+          export LC_ALL=zh_CN.UTF-8
+          echo -e "en_US.UTF-8 UTF-8\nzh_CN.UTF-8 UTF-8\nzh_CN.GBK GBK\nzh_CN GB2312" | sudo tee -a /var/lib/locales/supported.d/local
+          sudo timedatectl set-timezone Asia/Shanghai
+          sudo apt-get install fonts-droid-fallback ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming
+          echo "========================"
+          locale -a
+          echo "===========2============="
+          locale
+          echo "当前日期和时间：$(date +'%Y-%m-%d %H:%M:%S') "
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip' # caching pip dependencies
+      - run: pip install -r requirements.txt
+
+      - name: Install python dependencies
+        run: |
+          conda info
+          echo "========================"
+          conda list
+          conda env list
+          echo "========================"
+          playwright install chrome
+      # 不知道行不行, 缓存机制不太懂,不知道路径放到哪里,
+      # 算了,不缓存把
+      # - uses: actions/cache@v3
+      #   id: playwright-cache
+      #   with:
+      #     path:  /home/runner/.cache/ms-playwright
+      #     key: playwright-${{ runner.os }}-${{ hashFiles('playwright.lock.json') }}
+      #     restore-keys: |
+      #       playwright-${{ runner.os }}-
+      - name: Run tests
+        run: |
+          python3 main.py
+    # - name: update
+    #   run: |
+    #     git config --global user.email "zoushucai"
+    #     git config --global user.name "zoushucai@users.noreply.github.com"
+    #     git add .
+    #     git commit -m "Update"
+    #     git push origin main
