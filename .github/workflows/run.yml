@@ -60,6 +60,7 @@ jobs:
       - name: Run tests
         run: |
           python3 main.py
+          
     # - name: update
     #   run: |
     #     git config --global user.email "zoushucai"
