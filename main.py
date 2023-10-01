@@ -76,7 +76,7 @@ if __name__ == "__main__":
         if not is_exec:
             nn = 1
         else:
-            nn = 20
+            nn = 23
         loginfo(f"循环次数: {nn}")
         for ii in range(nn):  # 这里设置循环次数，你可以根据需要调整次数
             x = random.randint(0, 700)
@@ -85,10 +85,8 @@ if __name__ == "__main__":
             page.keyboard.press("Enter")
             loginfo(f"移动鼠标到: {x}, {y}")
             loginfo(f"当前时间为: {datetime.datetime.now().time()}")
-            if ii % 4 == 0:
-                page.reload()
             if ii > 1:
-                page.wait_for_timeout(random.randint(1000 * 60 * 0.5, 1000 * 62 * 0.5))  # 随机等待时间，单位是毫秒, 这里是 500秒 到 1500秒之间
+                page.wait_for_timeout(random.randint(1000 * 40 * 0.5, 1000 * 45 * 0.5))  # 随机等待时间，单位是毫秒, 这里是 500秒 到 1500秒之间
             if ii % 10 == 0 or ii <= 10:
                 loginfo(f"截图")
                 page.screenshot(path=screen_name())
