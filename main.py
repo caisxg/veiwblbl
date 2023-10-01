@@ -86,7 +86,7 @@ if __name__ == "__main__":
             loginfo(f"移动鼠标到: {x}, {y}")
             loginfo(f"当前时间为: {datetime.datetime.now().time()}")
             if ii > 1:
-                page.wait_for_timeout(random.randint(1000 * 40 * 0.5, 1000 * 45 * 0.5))  # 随机等待时间，单位是毫秒, 这里是 500秒 到 1500秒之间
+                page.wait_for_timeout(random.randint(1000 * 40, 1000 * 45))  # 随机等待时间，单位是毫秒, 这里是 500秒 到 1500秒之间
             if ii % 10 == 0 or ii <= 10:
                 loginfo(f"截图")
                 page.screenshot(path=screen_name())
